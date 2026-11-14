@@ -1,0 +1,7 @@
+# Preserve the audited production snapshot, including UTF-8 BOM and CRLF.
+src/mml.ps1 -text
+*.md text eol=lf
+*.cs text eol=lf
+tests/*.ps1 text eol=crlf
+.gitignore text eol=lf
+.gitattributes text eol=lf
