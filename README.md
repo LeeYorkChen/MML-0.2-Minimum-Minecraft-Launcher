@@ -1,87 +1,77 @@
-# MML — Minimum Minecraft Launcher
+# MML-0.2-Minimum-Minecraft-Launcher
 
-轻量级、单文件的 Minecraft Java Edition 启动器，基于 Windows PowerShell 与 .NET。
+MML 是一个单文件的 Minecraft Java 版启动器，使用 PowerShell 和 C# 编写，支持自动安装 Java、下载游戏及其依赖。将脚本粘贴到 Windows 自带的 PowerShell 中即可运行，无需管理员权限或额外模块。
 
-**当前版本：0.2.5。** 这是 0.2 系列的最终功能版本，后续仅计划修复 Bug 和严重安全问题。作者已选择 MIT；当前仍为发布候选，待来源审查完成及最终公开批准。
+**启动器的全部逻辑都包含在本地脚本中。** MML 运行时不会从远程服务器下载或执行额外的启动脚本，也不依赖第三方服务器生成启动计划。联网用于获取官方版本元数据，以及游戏、依赖、资源和 Java 等安装运行所需的文件。
 
-MML is a lightweight, single-file Minecraft Java Edition launcher for Windows, built with PowerShell and .NET. It detects or installs Java and downloads vanilla releases and their dependencies. Microsoft account authentication is not implemented.
+A single-file Minecraft Java Edition launcher for Windows, written in PowerShell and C#.
 
-## 功能与范围
+当前版本为 **0.2.5**。这是 0.2 系列最后的功能版本，后续仅修复 Bug 和严重安全问题。
 
-- 动态读取 Mojang 官方 Manifest，选择 1.20.1 及之后的正式版；识别本启动器已经安装的版本。
-- 下载 Client、Libraries、Assets、Native Libraries 与日志配置，复用已通过完整性校验的缓存。
-- 内嵌 C# 下载核心：共享 HttpClient、最多 8 个下载 Worker、最多 4 路本地文件校验、Assets Hash 去重。
-- Mojang 文件 SHA-1、Java 压缩包 SHA-256；下载过程中计算 Hash，有限重试，同目录临时文件及校验成功后替换。
-- URL 白名单、二进制下载逐级重定向检查、路径边界和 Reparse Point 检查、ZIP 安全解压。
-- 自动寻找匹配版本的 Windows x64 Java，必要时从 Adoptium 下载并验证安装；保留 JavaSoft 注册表检测。
-- 离线用户名和 UUID、Rules、Classpath、JVM / Game Arguments、Windows 参数转义及游戏日志。
+## 功能
 
-**不支持 Microsoft 正版账号登录。** 离线身份不能完成正版服务器或 Realms 身份认证；脚本中的 `MML_OFFLINE` 是占位值，不是正版 Access Token。游戏的使用权及相关条款仍由用户自行遵守。
+- 安装 Minecraft 1.20.1 及之后的正式版，识别并复用 MML 自己安装的版本。
+- 自动检测 Java，缺少所需版本时从 Adoptium 下载。
+- 并发下载游戏文件、依赖库和资源，复用已通过校验的缓存。
+- 支持 SHA-1 / SHA-256 校验、下载重试和 Native Libraries 解压。
+- 使用离线用户名启动游戏，自动生成 UUID 和启动参数。
 
-目前不提供 Mod / 整合包管理、其他启动器目录复用、GUI、服务器管理或自动更新。MML 不是 Mojang / Microsoft 的官方产品，仓库不附带游戏文件或 Java 安装包。
+## 使用限制
 
-## 使用
+- **不能选择游戏路径。** 游戏和下载缓存固定保存在 `%LOCALAPPDATA%\MML0.2`，MML 下载的 Java 也放在这个目录下，目前不能更改数据目录。
+- **只识别 MML 自己安装的游戏。** 不支持导入已有的 `.minecraft` 目录，也不会扫描或复用其他启动器安装的游戏。
+- **不能手动指定 Java 路径。** Java 由程序自动检测或下载；仍会检查 `JAVA_HOME`、注册表和 `PATH` 等来源，具体搜索范围见下文。
+- 不支持 Microsoft 账号登录，无法完成正版服务器或 Realms 的身份认证。
+- 不提供模组和整合包管理。
 
-1. 使用 Windows x64，打开普通权限的 **64 位 Windows PowerShell 5.1**。无需管理员权限，也无需另装模块、SDK 或编译器。
-2. 用文本编辑器打开 [src/mml.ps1](src/mml.ps1)，复制完整内容，粘贴到 PowerShell，按回车执行。
-3. 选择版本，输入 3–16 位英文字母、数字或下划线组成的用户名；直接回车使用 Steve。
-4. 等待 Java 检查、下载与校验完成，随后脚本启动游戏。
+## 运行要求
 
-首次运行需要能访问 Mojang、Adoptium 及其 GitHub Release 下载链路的网络；磁盘空间取决于版本。脚本目前固定使用 `-Xms512M -Xmx2G`。复制粘贴运行不需要修改系统执行策略。同一窗口可以再次粘贴运行，已编译的版本化 C# 类型会复用。
+- Windows x64，使用 64 位 PowerShell。
+- Windows PowerShell 5.1；也已在 Windows 上的 PowerShell 7.6.9 中测试。
+- 能够访问 Mojang、Adoptium 和 GitHub Release 下载服务的网络。
 
-数据目录始终是 `%LOCALAPPDATA%\MML0.2`，包含 `assets`、`libraries`、`versions`、`java`、`natives`、`instances`、`cache` 和 `logs`。升级不会改用新目录。排查错误可查看其中的游戏日志；分享前应清除个人路径、用户名和其他隐私。
+无需预先安装 Java。PowerShell 7 的其他版本尚未逐一测试；具体结果见[测试记录](docs/TESTING.md)。
 
-## 兼容性与验证边界
+## 使用方法
 
-| 环境 | 已完成的检查 | 仍未验证 |
-| --- | --- | --- |
-| Windows PowerShell 5.1.22621.2428 / .NET Framework | 本仓库语法、C# 编译、重复初始化、下载 / Hash / 安全回归；历史记录还包含完整安装入口模拟 | 本次没有实际启动 Minecraft；未穷举 Windows 安装环境 |
-| Windows PowerShell 7.6.9 / .NET 10 | 本仓库相同回归；已保留 Add-Type 引用修复；历史记录包含入口模拟 | 所有其他 PS7 小版本、Linux / macOS、真实游戏窗口 |
+1. 用文本编辑器打开 [src/mml.ps1](src/mml.ps1)，复制完整源码。
+2. 打开 Windows PowerShell，粘贴源码并执行。
+3. 选择 Minecraft 版本，输入用户名，等待安装完成。
 
-**主要支持目标仍是 Windows PowerShell 5.1；PS7 仅对上述实测环境作兼容说明。** 本次整理不更改启动器的功能或参数。详细证据、历史测试和本次测试分别见 [测试说明](docs/TESTING.md)。
+用户名支持 3–16 位英文字母、数字或下划线，直接回车使用 `Steve`。脚本会先检查 Java，再下载游戏文件，最后启动游戏。
 
-## 维护与源码
+升级脚本后仍使用 `%LOCALAPPDATA%\MML0.2`，MML 已下载的文件会在校验后复用。游戏日志在其中的 `logs` 目录。
 
-```text
-MML/
-├── README.md
-├── CHANGELOG.md
-├── .gitignore
-├── src/mml.ps1          # 唯一生产脚本，单独复制即可运行
-├── tests/              # 无外部模块的回归测试与本地 HTTP 桩
-└── docs/               # 架构、审查、测试、许可证比较与发布准备
-```
+当前 JVM 内存参数固定为 `-Xms512M -Xmx2G`，没有设置菜单。
 
-[版本记录](CHANGELOG.md) · [实现说明](docs/ARCHITECTURE.md) · [源码与安全审查](docs/SECURITY-REVIEW.md) · [文件整理记录](docs/PROJECT-AUDIT.md) · [发布准备](docs/PUBLISHING.md)
+## Java 与文件下载
 
-测试不会启动游戏，不操作现有 MML 数据目录。开发测试可在仓库根目录运行：
+MML 会搜索自有 Java、`JAVA_HOME`、常见厂商安装目录、JavaSoft 注册表和 `PATH`，并运行候选程序检查主版本和 x64 架构。放在其他位置、也未登记到上述来源的 Java 可能无法被发现。
 
-```powershell
-powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\tests\run-tests.ps1
-# 可选：额外联网获取官方版本元数据，并下载少量 Assets 到临时目录
-powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\tests\run-tests.ps1 -Online
-# 如果已经安装 PowerShell 7，可在相同目录运行
-pwsh.exe -NoProfile -File .\tests\run-tests.ps1
-```
+找不到匹配版本时，脚本从 Adoptium 下载 Windows x64 JRE，必要时改用 JDK，校验并解压后再次检查。
 
-测试命令中的 Bypass 仅用于当前测试进程，不更改系统或用户执行策略；受组织策略约束时请遵循本机规则。运行启动器仍可采用上面的完整源码粘贴方式。
+程序使用以下官方来源：
 
-## MIT 许可证
+- **Mojang**：`piston-meta.mojang.com`、`piston-data.mojang.com`、`launchermeta.mojang.com`、`launcher.mojang.com`、`libraries.minecraft.net` 和 `resources.download.minecraft.net`，用于版本元数据、游戏客户端、依赖库、资源及日志配置。
+- **Adoptium**：`api.adoptium.net`，用于查询和下载所需 Java。
+- **Adoptium / Temurin 的 GitHub Release**：Java 下载可能跳转至 `github.com/adoptium/temurin*-binaries/releases/download/`，以及 `objects.githubusercontent.com`、`release-assets.githubusercontent.com` 文件存储域名。
 
-MML 使用 [MIT License](LICENSE)，Copyright (c) 2026 leeyorkchen。MIT 仅适用于本项目有权授权的部分；第三方组件仍遵循各自许可证，不将第三方游戏文件、Java 文件或 Mojang 资源纳入 MIT 授权范围。来源核实状态见 [版权审查](docs/COPYRIGHT-REVIEW.md)。
+文件下载使用内嵌 C# 核心，默认最多 8 路下载、4 路本地校验。Mojang 文件使用 SHA-1，Java 压缩包使用 SHA-256；新文件在下载时计算 Hash，通过校验后才替换目标文件。下载失败最多尝试 3 次。
 
-不授予 Minecraft、Mojang 或 Microsoft 的商标及其他知识产权使用权。
+下载地址、重定向和 ZIP 路径均有检查，但仍有 JSON 自动重定向、目录竞争和解压中断等已知边界，详见[安全审查](docs/SECURITY-REVIEW.md)。本机 Java 和数据目录应来自可信来源。
 
-**MML is NOT an official Minecraft product and is NOT approved by or associated with Mojang or Microsoft.**
+## 文档与反馈
 
-## 系统要求与设计目标
+[更新日志](CHANGELOG.md) · [实现说明](docs/ARCHITECTURE.md) · [测试记录](docs/TESTING.md) · [安全问题报告](SECURITY.md)
 
-目标是用 Windows 自带的 64 位 PowerShell 5.1 与系统 .NET 运行单文件启动器，减少依赖和用户操作，尽可能兼容 Windows PowerShell 7。无需管理员权限或第三方模块。实测边界见兼容性表；安全机制不是专业安全认证，也不代表绝对安全，参见 [SECURITY](SECURITY.md)。
+报告问题时，请提供 PowerShell 版本、Minecraft 版本、错误信息和复现步骤。分享日志前请移除个人路径和其他隐私。开发测试的运行方法见 [tests/README.md](tests/README.md)；测试不启动游戏，也不操作现有游戏数据。
 
-## 下载与校验
+作者已在 Windows PowerShell 5.1 和 PowerShell 7.6.9 中实测，使用 Java 25 下载并启动 Minecraft 26.3 均正常。其他游戏版本和 Windows 环境尚未全面验证。
 
-官方 JSON 通过 Invoke-RestMethod 获取；文件统一由内嵌 C# 下载。新下载同时计算 Hash，已有缓存读取验证；失败有限重试，不在校验成功前替换正式文件。默认 8 路下载、4 路校验，Assets 按内容 Hash 去重。JSON 重定向及文件系统竞争边界见安全审查。
+## 许可证
 
-## Java 管理
+MML 使用 [MIT License](LICENSE)，Copyright (c) 2026 leeyorkchen。许可证仅适用于本项目有权授权的内容；第三方组件遵循各自许可证。[版权与来源审查](docs/COPYRIGHT-REVIEW.md)记录了本次检查的范围和结果。
 
-检查 MML 自有 Java、JAVA_HOME、常见厂商目录、JavaSoft 注册表和 PATH，执行候选程序确认主版本及 x64 架构。不进行任意目录全盘扫描。未找到时从 Adoptium 获取 Windows x64 JRE，必要时回退 JDK；ZIP 使用 SHA-256 和安全解压，随后再次探测。本机 Java 和缓存必须可信。
+Minecraft、游戏资源和 Java 不包含在本仓库中，也不纳入 MML 的 MIT 授权。该许可证不授予 Minecraft、Mojang 或 Microsoft 的商标及其他知识产权使用权。
+
+MML is NOT an official Minecraft product and is NOT approved by or associated with Mojang or Microsoft.
