@@ -4,6 +4,8 @@
 
 ## 本次实际执行
 
+首次公开发布准备期间，已对本候选目录再次执行 PS5.1 与 PS7 的完整 -Online 回归，均退出 0；PS7 此次也运行了显式 Compression 程序集加载后的完整测试。生产源码未修改。
+
 在新的独立进程中运行 `tests/run-tests.ps1 -Online`，Windows PowerShell 使用仅对测试进程生效的 `-ExecutionPolicy Bypass`；两个环境均最终返回退出码 0。
 
 | 检查 | Windows PS 5.1.22621.2428 | Windows PS 7.6.9 / .NET 10 |

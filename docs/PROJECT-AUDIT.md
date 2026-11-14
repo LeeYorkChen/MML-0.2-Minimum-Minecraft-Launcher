@@ -36,4 +36,4 @@
 
 Minecraft 与 Temurin 文件由程序运行时下载，未打包进仓库；它们各自的商标、使用和再分发条款不由 MML 的未来许可证替代。文档只有自行撰写的摘要与官方链接，没有复制整篇第三方文档或完整许可证正文。
 
-当前没有添加 LICENSE；详细比较见 [许可证选择](LICENSE-OPTIONS.md)。
+作者现已选择 MIT，版权署名为 leeyorkchen。完整文本见根目录 LICENSE；本轮来源核实及发布门禁见 COPYRIGHT-REVIEW.md。

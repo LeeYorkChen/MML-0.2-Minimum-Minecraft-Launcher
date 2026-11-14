@@ -2,7 +2,7 @@
 
 轻量级、单文件的 Minecraft Java Edition 启动器，基于 Windows PowerShell 与 .NET。
 
-**当前版本：0.2.5。** 这是 0.2 系列的最终功能版本，后续仅计划修复 Bug 和严重安全问题。本仓库为发布前整理的候选稳定快照；许可证与公开发布尚待项目所有者确认。
+**当前版本：0.2.5。** 这是 0.2 系列的最终功能版本，后续仅计划修复 Bug 和严重安全问题。作者已选择 MIT；当前仍为发布候选，待来源审查完成及最终公开批准。
 
 MML is a lightweight, single-file Minecraft Java Edition launcher for Windows, built with PowerShell and .NET. It detects or installs Java and downloads vanilla releases and their dependencies. Microsoft account authentication is not implemented.
 
@@ -66,6 +66,22 @@ pwsh.exe -NoProfile -File .\tests\run-tests.ps1
 
 测试命令中的 Bypass 仅用于当前测试进程，不更改系统或用户执行策略；受组织策略约束时请遵循本机规则。运行启动器仍可采用上面的完整源码粘贴方式。
 
-## 许可证状态
+## MIT 许可证
 
-**尚未选择许可证，没有添加 LICENSE，也没有授予开源许可证。** 目前不能把本仓库视为已经完成开源授权的项目。MIT、Apache-2.0、GPL-3.0 的区别及建议见 [许可证选择](docs/LICENSE-OPTIONS.md)，等待项目所有者决定后再更新本节。
+MML 使用 [MIT License](LICENSE)，Copyright (c) 2026 leeyorkchen。MIT 仅适用于本项目有权授权的部分；第三方组件仍遵循各自许可证，不将第三方游戏文件、Java 文件或 Mojang 资源纳入 MIT 授权范围。来源核实状态见 [版权审查](docs/COPYRIGHT-REVIEW.md)。
+
+不授予 Minecraft、Mojang 或 Microsoft 的商标及其他知识产权使用权。
+
+**MML is NOT an official Minecraft product and is NOT approved by or associated with Mojang or Microsoft.**
+
+## 系统要求与设计目标
+
+目标是用 Windows 自带的 64 位 PowerShell 5.1 与系统 .NET 运行单文件启动器，减少依赖和用户操作，尽可能兼容 Windows PowerShell 7。无需管理员权限或第三方模块。实测边界见兼容性表；安全机制不是专业安全认证，也不代表绝对安全，参见 [SECURITY](SECURITY.md)。
+
+## 下载与校验
+
+官方 JSON 通过 Invoke-RestMethod 获取；文件统一由内嵌 C# 下载。新下载同时计算 Hash，已有缓存读取验证；失败有限重试，不在校验成功前替换正式文件。默认 8 路下载、4 路校验，Assets 按内容 Hash 去重。JSON 重定向及文件系统竞争边界见安全审查。
+
+## Java 管理
+
+检查 MML 自有 Java、JAVA_HOME、常见厂商目录、JavaSoft 注册表和 PATH，执行候选程序确认主版本及 x64 架构。不进行任意目录全盘扫描。未找到时从 Adoptium 获取 Windows x64 JRE，必要时回退 JDK；ZIP 使用 SHA-256 和安全解压，随后再次探测。本机 Java 和缓存必须可信。

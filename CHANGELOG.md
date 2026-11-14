@@ -4,6 +4,8 @@
 
 ## 0.2.5 — 候选稳定快照
 
+- 首次公开发布准备：MIT、署名 leeyorkchen，补充 SECURITY、版权审查与 Release 说明；复跑 PS5.1 / PS7.6.9 回归。生产脚本不变，远程发布仍待最终批准。
+
 - 合并 Java 寻找与缺失时安装流程，继续实际执行 Java 校验主版本和 x64 架构；保留自有 Java、JAVA_HOME、厂商目录、JavaSoft 注册表和 PATH 搜索。
 - 注册表直接收集 JavaHome 属性，不向 `$home` / `$HOME` 赋值，保留之前的自动变量冲突修复。
 - 精简 Rules、ZIP / Native、参数替换、版本选择与公共资源获取的重复逻辑，保留路径、校验及错误边界。

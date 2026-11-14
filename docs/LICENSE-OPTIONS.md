@@ -1,4 +1,6 @@
-# 许可证选择（待决定）
+# 许可证选择（历史讨论）
+
+本页保留上一阶段比较。作者现已选择 MIT，署名 leeyorkchen；以根目录 LICENSE 为当前授权文本。下述待决定说明属于历史，不代表当前状态。
 
 尚未添加 LICENSE，本文件只是比较，不对源码授予任何许可。没有选定许可证时不能称为已经完成开源授权；参见 [GitHub 许可证说明](https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/licensing-a-repository)。
 
