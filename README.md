@@ -70,7 +70,7 @@ MML 会搜索自有 Java、`JAVA_HOME`、常见厂商安装目录、JavaSoft 注
 
 ## 许可证
 
-MML 使用 [MIT License](LICENSE)，Copyright (c) 2026 leeyorkchen。许可证仅适用于本项目有权授权的内容；第三方组件遵循各自许可证。[版权与来源审查](docs/COPYRIGHT-REVIEW.md)记录了本次检查的范围和结果。
+MML 使用 [MIT License](LICENSE)，Copyright (c) 2026 leeyorkchen。许可证仅适用于本项目有权授权的内容；第三方组件遵循各自许可证。
 
 Minecraft、游戏资源和 Java 不包含在本仓库中，也不纳入 MML 的 MIT 授权。该许可证不授予 Minecraft、Mojang 或 Microsoft 的商标及其他知识产权使用权。
 
